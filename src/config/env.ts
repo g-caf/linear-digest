@@ -1,22 +1,21 @@
 const requiredEnvVars = [
-  'PORT',
   'CRON_SECRET',
   'LINEAR_API_KEY',
   'TWILIO_ACCOUNT_SID',
   'TWILIO_AUTH_TOKEN',
   'TWILIO_FROM_NUMBER',
-  'SENDGRID_API_KEY',
+  'RESEND_API_KEY',
   'EMAIL_FROM',
 ] as const;
 
-type EnvVarName = (typeof requiredEnvVars)[number];
+type EnvVarName = (typeof requiredEnvVars)[number] | 'PORT';
 
-function getEnvVar(name: EnvVarName): string {
+function getEnvVar(name: EnvVarName, required = true): string {
   const value = process.env[name];
-  if (!value) {
+  if (!value && required) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
-  return value;
+  return value || '';
 }
 
 function validateEnv(): Record<EnvVarName, string> {
@@ -33,13 +32,13 @@ function validateEnv(): Record<EnvVarName, string> {
   }
 
   return {
-    PORT: getEnvVar('PORT'),
+    PORT: process.env.PORT || '3000',
     CRON_SECRET: getEnvVar('CRON_SECRET'),
     LINEAR_API_KEY: getEnvVar('LINEAR_API_KEY'),
     TWILIO_ACCOUNT_SID: getEnvVar('TWILIO_ACCOUNT_SID'),
     TWILIO_AUTH_TOKEN: getEnvVar('TWILIO_AUTH_TOKEN'),
     TWILIO_FROM_NUMBER: getEnvVar('TWILIO_FROM_NUMBER'),
-    SENDGRID_API_KEY: getEnvVar('SENDGRID_API_KEY'),
+    RESEND_API_KEY: getEnvVar('RESEND_API_KEY'),
     EMAIL_FROM: getEnvVar('EMAIL_FROM'),
   };
 }
