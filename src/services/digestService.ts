@@ -1,10 +1,10 @@
-import { LinearIssue, getOpenIssuesForUser } from './linearService.js';
+import { LinearIssue, getOpenIssuesForUserByEmail } from './linearService.js';
 import { sendDigestEmail } from './emailService.js';
 import { sendDigestSms } from './smsService.js';
 import { Teammate } from '../config/teammates.js';
 
 export async function sendDigestForTeammate(teammate: Teammate): Promise<{ issueCount: number }> {
-  const issues = await getOpenIssuesForUser(teammate.linearUserId);
+  const issues = await getOpenIssuesForUserByEmail(teammate.linearEmail);
 
   const sortedIssues = issues.sort((a, b) => {
     if (a.dueDate && b.dueDate) {

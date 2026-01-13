@@ -43,9 +43,9 @@
   <h2>Add Teammate</h2>
   <form id="add-form">
     <input type="text" name="name" placeholder="Name" required>
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="tel" name="phoneE164" placeholder="Phone E.164" required>
-    <input type="text" name="linearUserId" placeholder="Linear User ID" required>
+    <input type="email" name="email" placeholder="Email (for notifications)" required>
+    <input type="tel" name="phoneE164" placeholder="Phone (+15551234567)" required>
+    <input type="email" name="linearEmail" placeholder="Linear Email" required>
     <button type="submit">Add</button>
   </form>
 
@@ -56,7 +56,7 @@
         <th>Name</th>
         <th>Email</th>
         <th>Phone</th>
-        <th>Linear ID</th>
+        <th>Linear Email</th>
         <th>Active</th>
         <th></th>
       </tr>
@@ -77,7 +77,7 @@
           <td>${t.name}</td>
           <td>${t.email}</td>
           <td>${t.phoneE164}</td>
-          <td>${t.linearUserId}</td>
+          <td>${t.linearEmail}</td>
           <td>${t.active ? 'Yes' : 'No'}</td>
           <td><button onclick="deleteTeammate('${t.id}')">Delete</button></td>
         `;
@@ -92,7 +92,7 @@
         name: form.name.value,
         email: form.email.value,
         phoneE164: form.phoneE164.value,
-        linearUserId: form.linearUserId.value,
+        linearEmail: form.linearEmail.value,
       };
       await fetch('/admin/api/teammates', {
         method: 'POST',

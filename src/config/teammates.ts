@@ -3,6 +3,6 @@ export interface Teammate {
   name: string;
   email: string;
   phoneE164: string;
-  linearUserId: string;
+  linearEmail: string;
   active?: boolean;
 }
