@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 const router = Router();
 
 router.get('/', (_req, res) => {
-  res.sendFile(path.join(__dirname, '../public/admin.html'));
+  res.sendFile(path.join(__dirname, '../../public/admin.html'));
 });
 
 router.get('/api/teammates', (_req, res) => {
