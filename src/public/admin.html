@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linear Digest Admin</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    input, button {
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 14px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    button {
+      cursor: pointer;
+    }
+    form {
+      margin-bottom: 40px;
+    }
+    form input {
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Linear Digest Admin</h1>
+  
+  <h2>Add Teammate</h2>
+  <form id="add-form">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="tel" name="phoneE164" placeholder="Phone E.164" required>
+    <input type="text" name="linearUserId" placeholder="Linear User ID" required>
+    <button type="submit">Add</button>
+  </form>
+
+  <h2>Teammates</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Linear ID</th>
+        <th>Active</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="teammates-table">
+    </tbody>
+  </table>
+
+  <script>
+    async function loadTeammates() {
+      const res = await fetch('/admin/api/teammates');
+      const teammates = await res.json();
+      const tbody = document.getElementById('teammates-table');
+      tbody.innerHTML = '';
+      teammates.forEach(t => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${t.name}</td>
+          <td>${t.email}</td>
+          <td>${t.phoneE164}</td>
+          <td>${t.linearUserId}</td>
+          <td>${t.active ? 'Yes' : 'No'}</td>
+          <td><button onclick="deleteTeammate('${t.id}')">Delete</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    document.getElementById('add-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        name: form.name.value,
+        email: form.email.value,
+        phoneE164: form.phoneE164.value,
+        linearUserId: form.linearUserId.value,
+      };
+      await fetch('/admin/api/teammates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      form.reset();
+      loadTeammates();
+    });
+
+    async function deleteTeammate(id) {
+      await fetch(`/admin/api/teammates/${id}`, { method: 'DELETE' });
+      loadTeammates();
+    }
+
+    loadTeammates();
+  </script>
+</body>
+</html>

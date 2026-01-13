@@ -1,8 +1,9 @@
-import { teammates } from '../config/teammates.js';
+import { getTeammates } from '../services/teammatesService.js';
 import { sendDigestForTeammate } from '../services/digestService.js';
 import { logger } from '../services/logger.js';
 
 export async function runDailyDigestJob(): Promise<void> {
+  const teammates = getTeammates();
   const activeTeammates = teammates.filter(t => t.active);
   logger.info(`Starting daily digest job for ${activeTeammates.length} teammates`);
 
