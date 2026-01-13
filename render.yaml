@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: linear-digest
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+
+crons:
+  - name: daily-digest-cron
+    schedule: "0 23 * * *"
+    job:
+      type: http
+      method: POST
+      url: https://linear-digest.onrender.com/jobs/daily-digest?secret=${CRON_SECRET}
