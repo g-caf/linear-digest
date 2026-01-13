@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { env } from './config/env.js';
+import { initDb } from './services/db.js';
 import healthRouter from './routes/health.js';
 import jobsRouter from './routes/jobs.js';
 import adminRouter from './routes/admin.js';
@@ -21,6 +22,16 @@ app.use('/admin', adminRouter);
 
 const port = env.PORT || 3000;
 
-app.listen(port, () => {
-  logger.info(`Server started on port ${port}`);
+async function start() {
+  await initDb();
+  logger.info('Database initialized');
+  
+  app.listen(port, () => {
+    logger.info(`Server started on port ${port}`);
+  });
+}
+
+start().catch(err => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
 });

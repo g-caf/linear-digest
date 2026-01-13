@@ -1,25 +1,24 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { pool } from './db.js';
 import { Teammate } from '../config/teammates.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const dataPath = path.join(__dirname, '../data/teammates.json');
-
-export function getTeammates(): Teammate[] {
-  const data = fs.readFileSync(dataPath, 'utf-8');
-  return JSON.parse(data);
+export async function getTeammates(): Promise<Teammate[]> {
+  const result = await pool.query('SELECT * FROM teammates ORDER BY name');
+  return result.rows.map(row => ({
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phoneE164: row.phone_e164,
+    active: row.active,
+  }));
 }
 
-export function addTeammate(teammate: Teammate): void {
-  const teammates = getTeammates();
-  teammates.push(teammate);
-  fs.writeFileSync(dataPath, JSON.stringify(teammates, null, 2));
+export async function addTeammate(teammate: Teammate): Promise<void> {
+  await pool.query(
+    'INSERT INTO teammates (id, name, email, phone_e164, active) VALUES ($1, $2, $3, $4, $5)',
+    [teammate.id, teammate.name, teammate.email, teammate.phoneE164, teammate.active ?? true]
+  );
 }
 
-export function removeTeammate(id: string): void {
-  const teammates = getTeammates();
-  const filtered = teammates.filter(t => t.id !== id);
-  fs.writeFileSync(dataPath, JSON.stringify(filtered, null, 2));
+export async function removeTeammate(id: string): Promise<void> {
+  await pool.query('DELETE FROM teammates WHERE id = $1', [id]);
 }

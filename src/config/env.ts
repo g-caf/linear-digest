@@ -6,6 +6,7 @@ const requiredEnvVars = [
   'TWILIO_FROM_NUMBER',
   'RESEND_API_KEY',
   'EMAIL_FROM',
+  'DATABASE_URL',
 ] as const;
 
 type EnvVarName = (typeof requiredEnvVars)[number] | 'PORT';
@@ -40,6 +41,7 @@ function validateEnv(): Record<EnvVarName, string> {
     TWILIO_FROM_NUMBER: getEnvVar('TWILIO_FROM_NUMBER'),
     RESEND_API_KEY: getEnvVar('RESEND_API_KEY'),
     EMAIL_FROM: getEnvVar('EMAIL_FROM'),
+    DATABASE_URL: getEnvVar('DATABASE_URL'),
   };
 }
 
