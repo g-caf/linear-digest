@@ -24,7 +24,6 @@ router.post('/api/teammates', (req, res) => {
     name: req.body.name,
     email: req.body.email,
     phoneE164: req.body.phoneE164,
-    linearEmail: req.body.linearEmail,
     active: true,
   };
   addTeammate(teammate);

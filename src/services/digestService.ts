@@ -4,7 +4,7 @@ import { sendDigestSms } from './smsService.js';
 import { Teammate } from '../config/teammates.js';
 
 export async function sendDigestForTeammate(teammate: Teammate): Promise<{ issueCount: number }> {
-  const issues = await getOpenIssuesForUserByEmail(teammate.linearEmail);
+  const issues = await getOpenIssuesForUserByEmail(teammate.email);
 
   const sortedIssues = issues.sort((a, b) => {
     if (a.dueDate && b.dueDate) {
