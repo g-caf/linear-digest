@@ -2,6 +2,7 @@ import { LinearIssue, getOpenIssuesForUserByEmail } from './linearService.js';
 import { sendDigestEmail } from './emailService.js';
 import { sendDigestSms } from './smsService.js';
 import { Teammate } from '../config/teammates.js';
+import { logger } from './logger.js';
 
 export async function sendDigestForTeammate(teammate: Teammate): Promise<{ issueCount: number }> {
   const issues = await getOpenIssuesForUserByEmail(teammate.email);
@@ -17,18 +18,36 @@ export async function sendDigestForTeammate(teammate: Teammate): Promise<{ issue
 
   if (sortedIssues.length === 0) {
     const congratsMessage = "Congrats! Inbox zero - you're all caught up!";
-    await sendDigestEmail(teammate.email, 'Daily Digest', congratsMessage);
-    await sendDigestSms(teammate.phoneE164, congratsMessage);
+    await trySendEmail(teammate.email, 'Daily Digest', congratsMessage);
+    await trySendSms(teammate.phoneE164, congratsMessage);
     return { issueCount: 0 };
   }
 
   const emailHtml = buildEmailHtml(sortedIssues);
-  await sendDigestEmail(teammate.email, 'Daily Digest', emailHtml);
+  await trySendEmail(teammate.email, 'Daily Digest', emailHtml);
 
   const smsMessage = buildSmsMessage(sortedIssues);
-  await sendDigestSms(teammate.phoneE164, smsMessage);
+  await trySendSms(teammate.phoneE164, smsMessage);
 
   return { issueCount: sortedIssues.length };
+}
+
+async function trySendEmail(to: string, subject: string, html: string): Promise<void> {
+  try {
+    await sendDigestEmail(to, subject, html);
+    logger.info(`Email sent successfully to ${to}`);
+  } catch (error) {
+    logger.error({ message: `Failed to send email to ${to}`, error: String(error) });
+  }
+}
+
+async function trySendSms(to: string, body: string): Promise<void> {
+  try {
+    await sendDigestSms(to, body);
+    logger.info(`SMS sent successfully to ${to}`);
+  } catch (error) {
+    logger.error({ message: `Failed to send SMS to ${to}`, error: String(error) });
+  }
 }
 
 function buildEmailHtml(issues: LinearIssue[]): string {
