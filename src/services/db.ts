@@ -15,7 +15,16 @@ export async function initDb() {
       name TEXT NOT NULL,
       email TEXT NOT NULL,
       phone_e164 TEXT NOT NULL,
-      active BOOLEAN DEFAULT true
+      active BOOLEAN DEFAULT true,
+      consent_timestamp TIMESTAMPTZ,
+      consent_ip TEXT
     )
+  `);
+  
+  // Add consent columns if they don't exist (for existing databases)
+  await pool.query(`
+    ALTER TABLE teammates 
+    ADD COLUMN IF NOT EXISTS consent_timestamp TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS consent_ip TEXT
   `);
 }

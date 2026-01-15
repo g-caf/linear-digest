@@ -6,6 +6,7 @@ import { initDb } from './services/db.js';
 import healthRouter from './routes/health.js';
 import jobsRouter from './routes/jobs.js';
 import adminRouter from './routes/admin.js';
+import signupRouter from './routes/signup.js';
 import { logger } from './services/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -19,6 +20,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/health', healthRouter);
 app.use('/jobs', jobsRouter);
 app.use('/admin', adminRouter);
+app.use('/api/signup', signupRouter);
 
 const port = env.PORT || 3000;
 
